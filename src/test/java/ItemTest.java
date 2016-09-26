@@ -2,6 +2,8 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.sql2o.*;
 import java.sql.Timestamp;
+import java.util.Date;
+import java.text.DateFormat;
 
 public class ItemTest {
   private Item testItem;
@@ -28,11 +30,14 @@ public class ItemTest {
   public void item_instantiatesWithCustomerId_int() {
     assertEquals(1, testItem.getCustomerId());
   }
-  //
-  // @Test
-  // public void item_instantiatesWithDateSold_int() {
-  //   assertEquals(Timestamp.valueOf("2016-09-25"), testItem.getDateSold());
-  // }
+
+  @Test
+  public void item_recordsTimeOfCreationInDatabase() {
+    testItem.save();
+    Timestamp savedItemDateSold = Item.find(testItem.getId()).getDateSold();
+    Timestamp rightNow = new Timestamp (new Date().getTime());
+    assertEquals(rightNow.getDay(), savedItemDateSold.getDay());
+  }
 
   @Test
   public void save_returnsTrueIfDescriptionsAreTheSame() {
