@@ -3,23 +3,16 @@ import java.util.List;
 import org.sql2o.*;
 import java.sql.Timestamp;
 
-public class Product{
-  private String name;
-  private double price;
-  private int inventoryQuantity;
-  private int quantitySold;
-  private int id;
+public abstract class Product{
+  public String name;
+  public Float price;
+  public int inventoryQuantity;
+  public int quantitySold;
+  public int id;
 
-  public static final int MAX_INVENTORYQUANTITY_LEVEL = 30;
-  private static final int MAX_QUANTITYSOLD_LEVEL = 30;
-  private static final int MIN_ALL_LEVELS = 0;
-
-  public Product(String name, double price) {
-    this.name = name;
-    this.price = price;
-    this.inventoryQuantity = MAX_INVENTORYQUANTITY_LEVEL;
-    this.quantitySold = 0;
-  }
+  public static final int MAX_INVENTORYQUANTITY = 30;
+  public static final int MAX_QUANTITYSOLD = 30;
+  public static final int MIN_ALL = 0;
 
   public String getName() {
     return name;
@@ -41,16 +34,16 @@ public class Product{
     return id;
   }
 
-  // public void save() {
-  //   try(Connection con = DB.sql2o.open()) {
-  //     String sql = "INSERT INTO products (name, price) VALUES (:name, :price)";
-  //     this.id = (int) con.createQuery(sql, true)
-  //       .addParameter("name", this.name)
-  //       .addParameter("price", this.price)
-  //       .executeUpdate()
-  //       .getKey();
-  //   }
-  // }
+  public void save() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "INSERT INTO products (name, price) VALUES (:name, :price)";
+      this.id = (int) con.createQuery(sql, true)
+        .addParameter("name", this.name)
+        .addParameter("price", this.price)
+        .executeUpdate()
+        .getKey();
+    }
+  }
 
   public void sell(){
     inventoryQuantity--;
@@ -58,14 +51,14 @@ public class Product{
   }
 
   public void stockInventory(){
-    if (inventoryQuantity >= MAX_INVENTORYQUANTITY_LEVEL){
+    if (inventoryQuantity >= MAX_INVENTORYQUANTITY){
       throw new UnsupportedOperationException("You cannot buy more inventory!");
       }
     inventoryQuantity++;
   }
 
   public boolean isInStock() {
-    if (inventoryQuantity <= MIN_ALL_LEVELS ) {
+    if (inventoryQuantity <= MIN_ALL ) {
       return false;
     }
     return true;
@@ -82,30 +75,4 @@ public class Product{
     }
   }
 
-  public void save() {
-    try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO products (name, price) VALUES (:name, :price)";
-      this.id = (int) con.createQuery(sql, true)
-        .addParameter("name", this.name)
-        .addParameter("price", this.price)
-        .executeUpdate()
-        .getKey();
-    }
-  }
-
-  public static List<Product> all() {
-    String sql = "SELECT id, name, price FROM products";
-    try(Connection con = DB.sql2o.open()) {
-      return con.createQuery(sql).executeAndFetch(Product.class);
-    }
-  }
-
-  public List<Item> getItem() {
-    try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT * FROM items where productId=:id";
-      return con.createQuery(sql)
-        .addParameter("id", this.id)
-        .executeAndFetch(Item.class);
-    }
-  }
 }
