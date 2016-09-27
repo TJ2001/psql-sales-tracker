@@ -132,4 +132,12 @@ public class ApparelTest {
     SalesHistory[] salesHistory = new SalesHistory[] { firstSalesHistory, secondSalesHistory };
     assertTrue(testApparel.getSalesHistory().containsAll(Arrays.asList(salesHistory)));
   }
+
+  @Test
+  public void searchByName_retrieveAllProductsByName(){
+    testApparel.save();
+    anotherApparel.save();
+    assertEquals("Furoshiki Shoes", Apparel.searchByName("Furoshiki Shoes").get(0).getName());
+  }
+
 }

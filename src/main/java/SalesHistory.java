@@ -57,7 +57,7 @@ public class SalesHistory {
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO sales_history (productid, customerid, quantitybought, totalsales, saleDate) VALUES (:productid, :customerid, :quantitybought, :totalsales, now())";
+      String sql = "INSERT INTO sales_history (productid, customerid, quantitybought, totalsales, saledate) VALUES (:productid, :customerid, :quantitybought, :totalsales, now())";
       this.id = (int) con.createQuery(sql, true)
         .addParameter("productid", this.productId)
         .addParameter("customerid", this.customerId)
@@ -85,4 +85,11 @@ public class SalesHistory {
     }
   }
 
+  public static List<SalesHistory> getHistoryWithinDays(String numberOfDays) {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM sales_history WHERE saledate > (CURRENT_DATE - INTERVAL '" + numberOfDays + " days')";
+      return con.createQuery(sql)
+        .executeAndFetch(SalesHistory.class);
+    }
+  }
 }

@@ -47,4 +47,14 @@ public class Gadget extends Product {
         .executeAndFetch(SalesHistory.class);
     }
   }
+
+  public static List<Gadget> searchByName(String name) {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM products WHERE name LIKE '" + name + "'";
+      return con.createQuery(sql)
+        .throwOnMappingFailure(false)
+        .executeAndFetch(Gadget.class);
+    }
+
+  }
 }

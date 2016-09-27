@@ -84,4 +84,12 @@ public class SalesHistoryTest {
     anotherSalesHistory.save();
     assertEquals(SalesHistory.find(anotherSalesHistory.getId()), anotherSalesHistory);
   }
+
+  @Test
+  public void getHistoryWithinDays_returnsSalesHistoryWithinDays() {
+    testSalesHistory.save();
+    anotherSalesHistory.save();
+    assertEquals(SalesHistory.all(), SalesHistory.getHistoryWithinDays("30"));
+  }
+
 }

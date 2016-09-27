@@ -47,4 +47,14 @@ public class Apparel extends Product {
         .executeAndFetch(SalesHistory.class);
     }
   }
+
+  public static List<Apparel> searchByName(String name) {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM products WHERE name LIKE '" + name + "'";
+      return con.createQuery(sql)
+        .throwOnMappingFailure(false)
+        .executeAndFetch(Apparel.class);
+    }
+
+  }
 }

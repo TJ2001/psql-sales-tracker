@@ -134,4 +134,11 @@ public class GadgetTest {
     assertTrue(testGadget.getSalesHistory().containsAll(Arrays.asList(salesHistory)));
   }
 
+  @Test
+  public void searchByName_retrieveAllProductsByName(){
+    testGadget.save();
+    anotherGadget.save();
+    assertEquals("Robot", Gadget.searchByName("Robot").get(0).getName());
+  }
+
 }
